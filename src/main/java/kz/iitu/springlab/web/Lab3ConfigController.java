@@ -33,6 +33,8 @@ public class Lab3ConfigController {
                 "mailEnabled", appProperties.mail().enabled(),
                 "retryCount", appProperties.mail().retryCount(),
                 "timeout", appProperties.mail().timeout().toString(),
+                "requestsPerMinute", appProperties.rateLimit().requestsPerMinute(),
+                "burst", appProperties.rateLimit().burst(),
                 "serverPort", environment.getProperty("server.port"),
                 "activeProfiles", Arrays.toString(environment.getActiveProfiles()),
                 "banner", banner.message()
