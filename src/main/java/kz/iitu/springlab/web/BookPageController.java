@@ -1,9 +1,11 @@
 package kz.iitu.springlab.web;
 
+import jakarta.validation.Valid;
 import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -34,13 +36,26 @@ public class BookPageController {
         return "books/list";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("form", new BookForm());
+        model.addAttribute("genres", Genre.values());
+        return "books/form";
+    }
+
     @PostMapping
-    public String addBook(@RequestParam String title,
-                          @RequestParam String author,
-                          @RequestParam int year,
+    public String addBook(@Valid @ModelAttribute("form") BookForm form,
+                          BindingResult binding,
+                          Model model,
                           RedirectAttributes redirectAttributes) {
-        service.create(new Book(null, title, author, year));
-        redirectAttributes.addFlashAttribute("message", "Book successfully added!");
+
+        if (binding.hasErrors()) {
+            model.addAttribute("genres", Genre.values());
+            return "books/form";
+        }
+
+        Book saved = service.create(new Book(null, form.getTitle(), form.getAuthor(), form.getYear()));
+        redirectAttributes.addFlashAttribute("message", "Book «" + saved.title() + "» has been added!");
         return "redirect:/books";
     }
 }
