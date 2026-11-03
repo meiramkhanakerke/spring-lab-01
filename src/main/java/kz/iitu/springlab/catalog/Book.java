@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+//@Entity
 @Table(name = "book")
 public class Book {
 
