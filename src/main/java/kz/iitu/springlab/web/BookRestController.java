@@ -1,57 +1,44 @@
 package kz.iitu.springlab.web;
 
-import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.BookService;
-import org.springframework.http.ResponseEntity;
+import kz.iitu.springlab.catalog.Genre;
+import kz.iitu.springlab.web.dto.BookDto;
+import kz.iitu.springlab.web.dto.BookMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
 public class BookRestController {
 
-    private final BookService service;
+    private final BookService bookService;
+    private final BookMapper bookMapper;
 
-    public BookRestController(BookService service) {
-        this.service = service;
+    public BookRestController(BookService bookService, BookMapper bookMapper) {
+        this.bookService = bookService;
+        this.bookMapper = bookMapper;
     }
 
     @GetMapping
-    public List<Book> getAll(@RequestParam(required = false) String author,
-                             @RequestParam(required = false) Integer year) {
-        if (year != null) {
-            return service.findByYear(year);
+    public Page<BookDto> getAllBooks(
+            @RequestParam(required = false) Genre genre,
+            @PageableDefault(size = 5, sort = "title") Pageable pageable) {
+
+        if (genre != null) {
+            return bookService.findByGenre(genre, pageable).map(bookMapper::toDto);
         }
-        return service.findAll(author);
+        return bookService.findAll(pageable).map(bookMapper::toDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getById(@PathVariable long id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<Book> create(@RequestBody Book book) {
-        Book created = service.create(book);
-        return ResponseEntity.created(URI.create("/api/books/" + created.id())).body(created);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Book> update(@PathVariable long id, @RequestBody Book book) {
-        return service.update(id, book)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public BookDto getBookById(@PathVariable Long id) {
+        return bookMapper.toDto(bookService.findById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id) {
-        if (service.deleteById(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    public void deleteBook(@PathVariable Long id) {
+        bookService.deleteById(id);
     }
 }

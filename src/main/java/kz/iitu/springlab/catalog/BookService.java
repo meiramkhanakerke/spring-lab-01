@@ -1,55 +1,61 @@
 package kz.iitu.springlab.catalog;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class BookService {
 
-    private final BookRepository repository;
+    private final BookRepository bookRepository;
 
-    public BookService(BookRepository repository) {
-        this.repository = repository;
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
-    public List<Book> findAll(String author) {
-        if (author == null || author.isBlank()) {
-            return repository.findAll();
+    public Page<Book> findAll(Pageable pageable) {
+        return bookRepository.findAllWithAuthor(pageable);
+    }
+
+    public Page<Book> findByGenre(Genre genre, Pageable pageable) {
+        return bookRepository.findByGenre(genre, pageable);
+    }
+
+    public List<Book> findAll() {
+        return bookRepository.findAllWithAuthor();
+    }
+
+    public List<Book> findByAuthor(String authorName) {
+        if (authorName == null || authorName.isBlank()) {
+            return bookRepository.findAllWithAuthor();
         }
-        return repository.findAll().stream()
-                .filter(b -> b.author().toLowerCase().contains(author.toLowerCase()))
+        return bookRepository.findAllWithAuthor().stream()
+                .filter(b -> b.getAuthor() != null && b.getAuthor().getName().equalsIgnoreCase(authorName))
                 .toList();
     }
 
-    // ВАРИАНТ 6: Поиск книг по году выпуска
-    public List<Book> findByYear(Integer year) {
-        if (year == null) {
-            return repository.findAll();
-        }
-        return repository.findAll().stream()
-                .filter(b -> b.year() == year)
+    public List<Book> findByYear(int year) {
+        return bookRepository.findAllWithAuthor().stream()
+                .filter(b -> b.getYear() == year)
                 .toList();
     }
 
-    public Optional<Book> findById(long id) {
-        return repository.findById(id);
+    public Book findById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
-    public Book create(Book book) {
-        return repository.save(book);
+    @Transactional
+    public Book save(Book book) {
+        return bookRepository.save(book);
     }
 
-    public Optional<Book> update(long id, Book book) {
-        if (repository.findById(id).isEmpty()) {
-            return Optional.empty();
-        }
-        Book updatedBook = new Book(id, book.title(), book.author(), book.year());
-        return Optional.of(repository.save(updatedBook));
-    }
-
-    public boolean deleteById(long id) {
-        return repository.deleteById(id);
+    @Transactional
+    public void deleteById(Long id) {
+        bookRepository.deleteById(id);
     }
 }

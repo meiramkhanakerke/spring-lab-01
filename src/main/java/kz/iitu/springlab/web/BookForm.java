@@ -1,67 +1,35 @@
 package kz.iitu.springlab.web;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import kz.iitu.springlab.catalog.Genre;
 
 public class BookForm {
+    private Long id;
 
-    @NotBlank(message = "{book.title.required}")
-    @Size(max = 120, message = "{book.title.size}")
+    @NotBlank
+    @Size(max = 120)
     private String title;
 
-    @NotBlank(message = "{book.author.required}")
-    @NoDigits(message = "{book.author.nodigits}")
+    @NotBlank
     private String author;
 
-    @Min(value = 1450, message = "{book.year.range}")
-    @Max(value = 2100, message = "{book.year.range}")
+    @Min(1450)
+    @Max(2100)
     private int year;
 
-    @NotNull(message = "{book.genre.required}")
+    @NotNull
     private Genre genre;
 
-    private boolean available;
+    public BookForm() {}
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+    public Genre getGenre() { return genre; }
+    public void setGenre(Genre genre) { this.genre = genre; }
 }
