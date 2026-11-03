@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Book Catalog</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .form-group { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<h1 th:text="${title}">Book Catalog</h1>
+
+<h2>Search Books (Option 6: By Year / Author)</h2>
+<form th:action="@{/books}" method="get" style="margin-bottom: 20px;">
+    <input type="text" name="author" th:value="${author}" placeholder="Search by author..."/>
+    <input type="number" name="year" th:value="${year}" placeholder="Search by year (e.g. 2018)..."/>
+    <button type="submit">Filter</button>
+    <a href="/books"><button type="button">Reset</button></a>
+</form>
+
+<h2>Add New Book</h2>
+<form th:action="@{/books}" method="post">
+    <div class="form-group">
+        <input type="text" name="title" placeholder="Title" required/>
+    </div>
+    <div class="form-group">
+        <input type="text" name="author" placeholder="Author" required/>
+    </div>
+    <div class="form-group">
+        <input type="number" name="year" placeholder="Year" required/>
+    </div>
+    <button type="submit">Add Book</button>
+</form>
+
+<h2>Books List</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Year</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}">1</td>
+        <td th:text="${book.title}">Title</td>
+        <td th:text="${book.author}">Author</td>
+        <td th:text="${book.year}">2024</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

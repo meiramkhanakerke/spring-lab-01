@@ -1,0 +1,46 @@
+### 1. Список всех книг (200 OK)
+GET http://localhost:8080/api/books
+
+### 2. Получить книгу по ID (200 OK)
+GET http://localhost:8080/api/books/1
+
+### 3. Запрос несуществующей книги (Тест 404 Not Found)
+GET http://localhost:8080/api/books/999
+
+### 4. Создать новую книгу — Путь Абая (201 Created + Location)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "Abai Zholy",
+  "author": "Mukhtar Auezov",
+  "year": 1942,
+  "genre": "FICTION"
+}
+
+### 5. Обновить книгу — Кочевники (200 OK)
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Nomads",
+  "author": "Ilyas Esenberlin",
+  "year": 1976,
+  "genre": "HISTORY"
+}
+
+### 6. Удалить книгу (204 No Content)
+DELETE http://localhost:8080/api/books/1
+### Тест 1: Ошибка 404 Not Found
+GET http://localhost:8080/api/books/999
+
+### Тест 2: Ошибка 400 Bad Request (пустой заголовок title)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "Mukhtar Auezov",
+  "year": 1942,
+  "genre": "FICTION"
+}
