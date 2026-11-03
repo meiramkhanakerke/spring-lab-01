@@ -1,0 +1,10 @@
+CREATE TABLE accounts (
+                          id BIGSERIAL PRIMARY KEY,
+                          owner_name VARCHAR(120) NOT NULL,
+                          balance DECIMAL(19, 2) NOT NULL,
+                          version BIGINT NOT NULL DEFAULT 0
+);
+
+INSERT INTO accounts (owner_name, balance, version) VALUES
+                                                        ('Alice', 1000.00, 0),
+                                                        ('Bob', 500.00, 0);

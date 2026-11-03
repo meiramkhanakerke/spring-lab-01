@@ -1,4 +1,4 @@
-spring:
+sspring:
   datasource:
     url: jdbc:postgresql://localhost:5432/springlab
     username: springlab
