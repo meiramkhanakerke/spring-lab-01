@@ -12,7 +12,7 @@
 	<artifactId>spring-lab-01</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-lab-01</name>
-	<description>Spring Boot Lab 09</description>
+	<description>Spring Boot Lab 10</description>
 
 	<properties>
 		<java.version>21</java.version>
@@ -29,6 +29,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
 
 		<!-- Validation -->

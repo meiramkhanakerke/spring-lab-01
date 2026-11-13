@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${title}">Book Catalog</title>
@@ -9,9 +10,32 @@
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #f4f4f4; }
         .form-group { margin-bottom: 10px; }
+        .auth-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
+
+<div class="auth-bar">
+    <div>
+        User: <strong sec:authentication="name">anonymous</strong> |
+        Roles: <span sec:authentication="principal.authorities">[ROLE_USER]</span>
+    </div>
+    <div>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" style="margin-right: 12px;">Administration</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit">Log out</button>
+        </form>
+    </div>
+</div>
+
 <h1 th:text="${title}">Book Catalog</h1>
 
 <h2>Search Books (Option 6: By Year / Author)</h2>
@@ -19,22 +43,24 @@
     <input type="text" name="author" th:value="${author}" placeholder="Search by author..."/>
     <input type="number" name="year" th:value="${year}" placeholder="Search by year (e.g. 2018)..."/>
     <button type="submit">Filter</button>
-    <a href="/books"><button type="button">Reset</button></a>
+    <a th:href="@{/books}"><button type="button">Reset</button></a>
 </form>
 
-<h2>Add New Book</h2>
-<form th:action="@{/books}" method="post">
-    <div class="form-group">
-        <input type="text" name="title" placeholder="Title" required/>
-    </div>
-    <div class="form-group">
-        <input type="text" name="author" placeholder="Author" required/>
-    </div>
-    <div class="form-group">
-        <input type="number" name="year" placeholder="Year" required/>
-    </div>
-    <button type="submit">Add Book</button>
-</form>
+<div sec:authorize="hasRole('ADMIN')">
+    <h2>Add New Book</h2>
+    <form th:action="@{/books}" method="post">
+        <div class="form-group">
+            <input type="text" name="title" placeholder="Title" required/>
+        </div>
+        <div class="form-group">
+            <input type="text" name="author" placeholder="Author" required/>
+        </div>
+        <div class="form-group">
+            <input type="number" name="year" placeholder="Year" required/>
+        </div>
+        <button type="submit">Add Book</button>
+    </form>
+</div>
 
 <h2>Books List</h2>
 <table>
