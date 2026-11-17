@@ -19,16 +19,16 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/login", "/error", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/books/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/books/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().denyAll())
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .defaultSuccessUrl("/books", true)
                         .permitAll())
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/?logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll())
                 // Вариант 6: Content-Security-Policy (блокировка inline-скриптов)
                 .headers(headers -> headers
