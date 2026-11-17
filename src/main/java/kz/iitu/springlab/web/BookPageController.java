@@ -20,6 +20,7 @@ public class BookPageController {
     @GetMapping
     public String index(Model model) {
         model.addAttribute("books", bookService.findAll());
-        return "books/index";
+        model.addAttribute("genres", Genre.values());
+        return "books/list";
     }
 }
