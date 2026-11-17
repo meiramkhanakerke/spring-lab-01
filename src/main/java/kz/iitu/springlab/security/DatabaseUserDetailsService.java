@@ -1,5 +1,6 @@
 package kz.iitu.springlab.security;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,23 +10,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseUserDetailsService implements UserDetailsService {
 
-    private final AppUserRepository users;
+    private final AppUserRepository repo;
 
-    public DatabaseUserDetailsService(AppUserRepository users) {
-        this.users = users;
+    public DatabaseUserDetailsService(AppUserRepository repo) {
+        this.repo = repo;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser u = users.findByUsername(username)
+        AppUser appUser = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        return User.withUsername(u.getUsername())
-                .password(u.getPasswordHash())
-                .authorities(u.getRoles().stream()
-                        .map(r -> "ROLE_" + r)
-                        .toArray(String[]::new))
-                .disabled(!u.isEnabled())
+        var authorities = appUser.getRoles().stream()
+                .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+
+        return User.withUsername(appUser.getUsername())
+                .password(appUser.getPasswordHash())
+                .authorities(authorities)
+                .disabled(!appUser.isEnabled())
                 .build();
     }
 }
